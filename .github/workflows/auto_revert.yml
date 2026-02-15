@@ -20,6 +20,11 @@ jobs:
           git config user.name "SRE Bot"
           git config user.email "bot@example.com"
       
+      - name: Delete existing branch if exists
+        run: |
+          git push origin --delete revert-${{ inputs.commit_id }} || true
+        continue-on-error: true
+      
       - name: Revert Commit
         run: |
           git checkout -b revert-${{ inputs.commit_id }}
@@ -29,7 +34,7 @@ jobs:
       - name: Create PR
         run: |
           gh pr create \
-            --title "Revert commit ${{ inputs.commit_id }}" \
+            --title "🚨 Revert commit ${{ inputs.commit_id }}" \
             --body "Auto-reverted by Elastic SRE Agent" \
             --base main
         env:
